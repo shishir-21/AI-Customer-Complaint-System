@@ -1,13 +1,12 @@
 from typing import TypedDict
 
 from langgraph.graph import StateGraph, END
-from app.services.ai_service import (
-    extract_complaint_information,
-    generate_summary,
-    generate_root_cause,
-    generate_capa,
-    classify_risk,
-)
+
+from app.agents.nodes.extract_node import extract_complaint_node
+from app.agents.nodes.summary_node import summary_node
+from app.agents.nodes.root_cause_node import root_cause_node
+from app.agents.nodes.capa_node import capa_node
+from app.agents.nodes.risk_node import risk_node
 
 
 class ComplaintState(TypedDict):
@@ -18,48 +17,6 @@ class ComplaintState(TypedDict):
     root_cause: str
     capa: str
 
-
-def extract_complaint_node(state):
-
-    extracted = extract_complaint_information(
-        state["extracted_text"]
-    )
-
-    state["extracted_data"] = extracted
-
-    return state
-
-def summary_node(state):
-
-    state["summary"] = generate_summary(
-        state["extracted_text"]
-    )
-
-    return state
-
-def root_cause_node(state):
-
-    state["root_cause"] = generate_root_cause(
-        state["extracted_text"]
-    )
-
-    return state
-
-def capa_node(state):
-
-    state["capa"] = generate_capa(
-        state["extracted_text"]
-    )
-
-    return state
-
-def risk_node(state):
-
-    state["risk"] = classify_risk(
-        state["extracted_text"]
-    )
-
-    return state
 
 workflow = StateGraph(ComplaintState)
 
