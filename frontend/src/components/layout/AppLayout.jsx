@@ -1,4 +1,4 @@
-import { Grid, Container } from "@mui/material";
+import { Box, Container, Grid } from "@mui/material";
 
 function AppLayout({ left, right }) {
     return (
@@ -6,27 +6,45 @@ function AppLayout({ left, right }) {
             maxWidth={false}
             disableGutters
             sx={{
-                width: "100%",
                 height: "100vh",
-                px: 3,
-                py: 2,
+                overflow: "hidden",
+                p: 2,
+                bgcolor: "#f5f5f5",
             }}
         >
-            <Grid
-                container
-                spacing={2}
+            <Box
                 sx={{
                     height: "100%",
                 }}
             >
-                <Grid size={{ xs: 12, md: 7 }}>
-                    {left}
-                </Grid>
+                <Grid
+                    container
+                    spacing={2}
+                    sx={{
+                        height: "100%",
+                    }}
+                >
+                    <Grid
+                        size={{ xs: 12, md: 7 }}
+                        sx={{
+                            height: "100%",
+                            display: "flex",
+                        }}
+                    >
+                        {left}
+                    </Grid>
 
-                <Grid size={{ xs: 12, md: 5 }}>
-                    {right}
+                    <Grid
+                        size={{ xs: 12, md: 5 }}
+                        sx={{
+                            height: "100%",
+                            display: "flex",
+                        }}
+                    >
+                        {right}
+                    </Grid>
                 </Grid>
-            </Grid>
+            </Box>
         </Container>
     );
 }

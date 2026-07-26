@@ -1,22 +1,56 @@
 import { useEffect, useState } from "react";
 
+import {
+    Box,
+    Snackbar,
+    Alert,
+} from "@mui/material";
+
 import { saveComplaint } from "../../api/complaintApi";
+
+import ComplaintHeader from "./ComplaintHeader";
+import CustomerSection from "./CustomerSection";
+import ProductSection from "./ProductSection";
+import DefectSection from "./DefectSection";
+import RiskAssessmentCard from "./RiskAssessmentCard";
+import AISummaryCard from "./AISummaryCard";
+import RootCauseCard from "./RootCauseCard";
+import CAPACard from "./CAPACard";
+import CommitButton from "./CommitButton";
 
 function ComplaintForm({ aiResult }) {
 
     const [formData, setFormData] = useState({
+        complaint_source: "AI Copilot",
+
         customer_name: "",
+
         product_name: "",
         product_strength: "",
         batch_number: "",
+
+        quantity_affected: "",
+        manufacturing_date: "",
+        expiry_date: "",
+
+        complaint_type: "",
+
         complaint_description: "",
+
         initial_severity: "",
     });
+
+    const [openSnackbar, setOpenSnackbar] = useState(false);
 
     useEffect(() => {
 
         if (aiResult) {
-            setFormData(aiResult.extracted_data);
+
+            setFormData((prev) => ({
+                ...prev,
+                ...aiResult.extracted_data,
+            }));
+
         }
 
     }, [aiResult]);
@@ -29,6 +63,7 @@ function ComplaintForm({ aiResult }) {
             ...prev,
             [name]: value,
         }));
+
     };
 
     const handleSave = async () => {
@@ -36,23 +71,22 @@ function ComplaintForm({ aiResult }) {
         try {
 
             const payload = {
-                complaint_source: "AI Upload",
 
                 ...formData,
 
-                ai_summary: aiResult.summary,
-                ai_root_cause: aiResult.root_cause,
-                ai_capa: aiResult.capa,
-                ai_risk: aiResult.risk,
+                ai_summary: aiResult?.summary || "",
+
+                ai_root_cause: aiResult?.root_cause || "",
+
+                ai_capa: aiResult?.capa || "",
+
+                ai_risk: aiResult?.risk || "",
+
             };
 
-            console.log(payload);
+            await saveComplaint(payload);
 
-            const response = await saveComplaint(payload);
-
-            alert("Complaint saved successfully!");
-
-            console.log(response);
+            setOpenSnackbar(true);
 
         } catch (error) {
 
@@ -67,113 +101,68 @@ function ComplaintForm({ aiResult }) {
     };
 
     return (
-        <div style={{ marginTop: "40px" }}>
 
-            <h2>Complaint Form</h2>
+        <Box
+            sx={{
+                mt:4,
+                pb:6,
+            }}
+        >
 
-            <div>
+            <ComplaintHeader />
 
-                <label>Customer Name</label>
-                <br />
+            <CustomerSection
+                formData={formData}
+                handleChange={handleChange}
+            />
 
-                <input
-                    type="text"
-                    name="customer_name"
-                    value={formData.customer_name}
-                    onChange={handleChange}
-                />
+            <ProductSection
+                formData={formData}
+                handleChange={handleChange}
+            />
 
-            </div>
+            <DefectSection
+                formData={formData}
+                handleChange={handleChange}
+            />
 
-            <br />
+            <RiskAssessmentCard
+                aiResult={aiResult}
+            />
 
-            <div>
+            <AISummaryCard
+                aiResult={aiResult}
+            />
 
-                <label>Product Name</label>
-                <br />
+            <RootCauseCard
+                aiResult={aiResult}
+            />
 
-                <input
-                    type="text"
-                    name="product_name"
-                    value={formData.product_name}
-                    onChange={handleChange}
-                />
+            <CAPACard
+                aiResult={aiResult}
+            />
 
-            </div>
+            <CommitButton
+                onClick={handleSave}
+            />
 
-            <br />
+            <Snackbar
+                open={openSnackbar}
+                autoHideDuration={3000}
+                onClose={() => setOpenSnackbar(false)}
+            >
+                <Alert
+                    severity="success"
+                    variant="filled"
+                >
+                    Complaint saved successfully!
+                </Alert>
+            </Snackbar>
 
-            <div>
+        </Box>
 
-                <label>Product Strength</label>
-                <br />
-
-                <input
-                    type="text"
-                    name="product_strength"
-                    value={formData.product_strength}
-                    onChange={handleChange}
-                />
-
-            </div>
-
-            <br />
-
-            <div>
-
-                <label>Batch Number</label>
-                <br />
-
-                <input
-                    type="text"
-                    name="batch_number"
-                    value={formData.batch_number}
-                    onChange={handleChange}
-                />
-
-            </div>
-
-            <br />
-
-            <div>
-
-                <label>Complaint Description</label>
-                <br />
-
-                <textarea
-                    rows="5"
-                    cols="60"
-                    name="complaint_description"
-                    value={formData.complaint_description}
-                    onChange={handleChange}
-                />
-
-            </div>
-
-            <br />
-
-            <div>
-
-                <label>Initial Severity</label>
-                <br />
-
-                <input
-                    type="text"
-                    name="initial_severity"
-                    value={formData.initial_severity}
-                    onChange={handleChange}
-                />
-
-            </div>
-
-            <br />
-
-            <button onClick={handleSave}>
-                Save Complaint
-            </button>
-
-        </div>
     );
+
 }
 
 export default ComplaintForm;
