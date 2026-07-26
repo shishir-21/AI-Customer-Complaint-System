@@ -14,7 +14,7 @@ function ChatMessage({ role, content }) {
 
             <div
                 style={{
-                    maxWidth: "80%",
+                    maxWidth: "94%",
                     padding: "12px",
                     borderRadius: "12px",
                     backgroundColor: isUser ? "#4F46E5" : "#F3F4F6",

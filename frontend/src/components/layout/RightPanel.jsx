@@ -6,6 +6,8 @@ function RightPanel({ children }) {
 
         <Card
             sx={{
+                width: "100%",
+                minWidth: 0,
                 height: "95vh",
                 borderRadius: 3,
             }}
@@ -15,6 +17,7 @@ function RightPanel({ children }) {
                 sx={{
                     height: "100%",
                     boxSizing: "border-box",
+                    p: 0,
                 }}
             >
 

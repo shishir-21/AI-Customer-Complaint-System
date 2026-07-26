@@ -29,11 +29,15 @@ function ChatInput({ onSend, loading, onUpload }) {
 
         <Box
             sx={{
+                width: "100%",
+                minWidth: 0,
+                boxSizing: "border-box",
                 flexShrink: 0,
                 display: "flex",
                 alignItems: "center",
                 gap: 1,
-                p: 2.5,
+                px: 2,
+                py: 2.5,
                 borderTop: "1px solid #E5E7EB",
                 background: "#fff",
             }}
@@ -57,12 +61,13 @@ function ChatInput({ onSend, loading, onUpload }) {
 
             <IconButton
                 onClick={() => fileInputRef.current.click()}
+                sx={{ flexShrink: 0 }}
             >
                 <AttachFileIcon />
             </IconButton>
 
             <TextField
-                fullWidth
+                sx={{ flex: 1, minWidth: 0 }}
                 placeholder="Type a message or paste a complaint..."
                 value={message}
                 multiline
@@ -86,6 +91,7 @@ function ChatInput({ onSend, loading, onUpload }) {
                 disabled={loading}
                 onClick={handleSend}
                 sx={{
+                    flexShrink: 0,
                     bgcolor: "#4F46E5",
                     color: "white",
                     "&:hover": {

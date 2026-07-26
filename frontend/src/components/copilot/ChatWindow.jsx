@@ -4,15 +4,7 @@ function ChatWindow({ messages }) {
 
     return (
 
-        <div
-            style={{
-                flex: 1,
-                overflowY: "auto",
-                padding: "15px",
-                border: "1px solid #ddd",
-                borderRadius: "10px",
-            }}
-        >
+        <div className="chat-window">
 
             {messages.map((message, index) => (
 
