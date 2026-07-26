@@ -8,10 +8,12 @@ from app.agents.nodes.root_cause_node import root_cause_node
 from app.agents.nodes.capa_node import capa_node
 from app.agents.nodes.risk_node import risk_node
 
+from app.schemas.ai_schema import ComplaintExtraction
+
 
 class ComplaintState(TypedDict):
     extracted_text: str
-    extracted_data: dict
+    extracted_data: ComplaintExtraction
     summary: str
     risk: str
     root_cause: str

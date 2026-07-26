@@ -40,9 +40,9 @@ def extract_from_pdf(
     )
 
     return {
-    "extracted_data": result["extracted_data"],
+    "extracted_data": result["extracted_data"].model_dump(),
     "summary": result["summary"],
     "root_cause": result["root_cause"],
     "capa": result["capa"],
     "risk": result["risk"],
-    }
+}
