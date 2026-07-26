@@ -1,8 +1,19 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
-function ChatInput({ onSend, loading }) {
+import {
+    Box,
+    IconButton,
+    TextField,
+} from "@mui/material";
+
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import SendRoundedIcon from "@mui/icons-material/SendRounded";
+
+function ChatInput({ onSend, loading, onUpload }) {
 
     const [message, setMessage] = useState("");
+
+    const fileInputRef = useRef(null);
 
     const handleSend = () => {
 
@@ -16,30 +27,77 @@ function ChatInput({ onSend, loading }) {
 
     return (
 
-        <div
-            style={{
+        <Box
+            sx={{
                 display: "flex",
-                gap: "10px",
-                marginTop: "15px",
+                alignItems: "center",
+                gap: 1,
+                p: 2,
+                borderTop: "1px solid #E5E7EB",
+                background: "#fff",
             }}
         >
 
-            <textarea
-                rows="3"
-                style={{ flex: 1 }}
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="Type complaint..."
+            <input
+                ref={fileInputRef}
+                hidden
+                type="file"
+                accept=".pdf"
+                onChange={(e) => {
+
+                    if (e.target.files[0]) {
+
+                        onUpload(e.target.files[0]);
+
+                    }
+
+                }}
             />
 
-            <button
-                onClick={handleSend}
-                disabled={loading}
+            <IconButton
+                onClick={() => fileInputRef.current.click()}
             >
-                Send
-            </button>
+                <AttachFileIcon />
+            </IconButton>
 
-        </div>
+            <TextField
+                fullWidth
+                placeholder="Type a message or paste a complaint..."
+                value={message}
+                multiline
+                maxRows={4}
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyDown={(e) => {
+
+                    if (e.key === "Enter" && !e.shiftKey) {
+
+                        e.preventDefault();
+
+                        handleSend();
+
+                    }
+
+                }}
+            />
+
+            <IconButton
+                color="primary"
+                disabled={loading}
+                onClick={handleSend}
+                sx={{
+                    bgcolor: "#4F46E5",
+                    color: "white",
+                    "&:hover": {
+                        bgcolor: "#4338CA",
+                    },
+                    width: 48,
+                    height: 48,
+                }}
+            >
+                <SendRoundedIcon />
+            </IconButton>
+
+        </Box>
 
     );
 

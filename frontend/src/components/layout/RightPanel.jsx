@@ -6,7 +6,8 @@ function RightPanel({ children }) {
 
         <Card
             sx={{
-                height: "100%",
+                height: "95vh",
+                borderRadius: 3,
             }}
         >
 

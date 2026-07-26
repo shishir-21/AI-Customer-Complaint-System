@@ -1,78 +1,137 @@
 import { useState } from "react";
+
+import {
+    Button,
+    Stack,
+    Typography,
+} from "@mui/material";
+
 import { uploadComplaintPDF } from "../api/aiApi";
+
 import ComplaintForm from "../components/complaint/ComplaintForm";
 import CopilotPanel from "../components/copilot/CopilotPanel";
+
+import AppLayout from "../components/layout/AppLayout";
+import LeftPanel from "../components/layout/LeftPanel";
+import RightPanel from "../components/layout/RightPanel";
+import Header from "../components/layout/Header";
 
 function UploadPage() {
 
     const [file, setFile] = useState(null);
+
     const [aiResult, setAiResult] = useState(null);
 
     const handleUpload = async () => {
 
         if (!file) {
+
             alert("Please select a PDF.");
+
             return;
         }
 
         try {
+
             const result = await uploadComplaintPDF(file);
-            console.log(result); // Optional: for debugging
+
             setAiResult(result);
+
         } catch (error) {
+
             console.error(error);
+
             alert("Failed to analyze PDF.");
+
         }
+
     };
 
     return (
 
-        <div
-            style={{
-                display: "flex",
-                gap: "30px",
-                padding: "30px",
-                alignItems: "flex-start",
-            }}
-        >
+        <AppLayout
 
-            {/* LEFT SIDE */}
+            left={
 
-            <div style={{ flex: 2 }}>
+                <LeftPanel>
 
-                <h1>AI Customer Complaint System</h1>
+                    <Header />
 
-                <input
-                    type="file"
-                    accept=".pdf"
-                    onChange={(e) => setFile(e.target.files[0])}
-                />
+                    <Stack spacing={3} mt={4}>
 
-                <br /><br />
+                        <Typography variant="h6">
 
-                <button onClick={handleUpload}>
-                    Upload & Analyze
-                </button>
+                            Upload Complaint PDF
 
-                {aiResult && (
-                    <ComplaintForm aiResult={aiResult} />
-                )}
+                        </Typography>
 
-            </div>
+                        <Button
+                            variant="contained"
+                            component="label"
+                        >
 
-            {/* RIGHT SIDE */}
+                            Choose PDF
 
-            <div style={{ flex: 1 }}>
+                            <input
+                                hidden
+                                type="file"
+                                accept=".pdf"
+                                onChange={(e) =>
+                                    setFile(e.target.files[0])
+                                }
+                            />
 
-                <CopilotPanel
-                    onAIResult={setAiResult}
-                />
+                        </Button>
 
-            </div>
+                        {file && (
 
-        </div>
+                            <Typography>
+
+                                Selected File: {file.name}
+
+                            </Typography>
+
+                        )}
+
+                        <Button
+                            variant="contained"
+                            onClick={handleUpload}
+                        >
+
+                            Upload & Analyze
+
+                        </Button>
+
+                        {aiResult && (
+
+                            <ComplaintForm
+                                aiResult={aiResult}
+                            />
+
+                        )}
+
+                    </Stack>
+
+                </LeftPanel>
+
+            }
+
+            right={
+
+                <RightPanel>
+
+                    <CopilotPanel
+                        onAIResult={setAiResult}
+                    />
+
+                </RightPanel>
+
+            }
+
+        />
 
     );
+
 }
 
 export default UploadPage;

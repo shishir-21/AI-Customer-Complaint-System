@@ -1,5 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
+import ChatHeader from "./ChatHeader";
+
+import "./chat.css";
 
 import ChatWindow from "./ChatWindow";
 import ChatInput from "./ChatInput";
@@ -82,20 +85,54 @@ The complaint form has been updated automatically.`,
 
     };
 
+    const handlePdfUpload = async (file) => {
+
+        const formData = new FormData();
+
+        formData.append("file", file);
+
+        try {
+
+            setLoading(true);
+
+            const response = await axios.post(
+                "http://localhost:8000/api/v1/ai/extract",
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
+
+            onAIResult(response.data);
+
+            setMessages((prev) => [
+                ...prev,
+                {
+                    role: "assistant",
+                    content:
+                        "📄 PDF processed successfully.\n\nThe complaint form has been updated.",
+                },
+            ]);
+
+        } catch (error) {
+
+            console.error(error);
+
+        } finally {
+
+            setLoading(false);
+
+        }
+
+    };
+
     return (
 
-        <div
-            style={{
-                display: "flex",
-                flexDirection: "column",
-                height: "700px",
-                border: "1px solid #ddd",
-                borderRadius: "12px",
-                padding: "20px",
-            }}
-        >
+        <div className="copilot-container">
 
-            <h2>🤖 AI Copilot</h2>
+            <ChatHeader />
 
             <ChatWindow
                 messages={messages}
@@ -104,11 +141,12 @@ The complaint form has been updated automatically.`,
             <ChatInput
                 onSend={handleSend}
                 loading={loading}
+                onUpload={handlePdfUpload}
             />
 
         </div>
 
-    );
+    )
 
 }
 
