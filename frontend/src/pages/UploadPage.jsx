@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { uploadComplaintPDF } from "../api/aiApi";
 import ComplaintForm from "../components/complaint/ComplaintForm";
+import CopilotPanel from "../components/copilot/CopilotPanel";
 
 function UploadPage() {
 
@@ -25,29 +26,52 @@ function UploadPage() {
     };
 
     return (
-        <div style={{ padding: "30px" }}>
 
-            <h1>AI Customer Complaint System</h1>
+        <div
+            style={{
+                display: "flex",
+                gap: "30px",
+                padding: "30px",
+                alignItems: "flex-start",
+            }}
+        >
 
-            <input
-                type="file"
-                accept=".pdf"
-                onChange={(e) => setFile(e.target.files[0])}
-            />
+            {/* LEFT SIDE */}
 
-            <br />
-            <br />
+            <div style={{ flex: 2 }}>
 
-            <button onClick={handleUpload}>
-                Upload & Analyze
-            </button>
+                <h1>AI Customer Complaint System</h1>
 
-            {/* Complaint Form */}
-            {aiResult && (
-                <ComplaintForm aiResult={aiResult} />
-            )}
+                <input
+                    type="file"
+                    accept=".pdf"
+                    onChange={(e) => setFile(e.target.files[0])}
+                />
+
+                <br /><br />
+
+                <button onClick={handleUpload}>
+                    Upload & Analyze
+                </button>
+
+                {aiResult && (
+                    <ComplaintForm aiResult={aiResult} />
+                )}
+
+            </div>
+
+            {/* RIGHT SIDE */}
+
+            <div style={{ flex: 1 }}>
+
+                <CopilotPanel
+                    onAIResult={setAiResult}
+                />
+
+            </div>
 
         </div>
+
     );
 }
 
