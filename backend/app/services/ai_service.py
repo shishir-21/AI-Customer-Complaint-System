@@ -9,6 +9,7 @@ from app.prompts.capa_prompt import CAPA_PROMPT
 from app.prompts.risk_prompt import RISK_PROMPT
 
 from app.services.groq_service import llm
+from app.utils.json_parser import parse_llm_json
 
 
 def extract_complaint_information(text: str):
@@ -28,7 +29,7 @@ def extract_complaint_information(text: str):
         }
     )
 
-    return json.loads(response.content)
+    return parse_llm_json(response.content)
 
 
 def generate_summary(text: str):
