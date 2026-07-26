@@ -195,17 +195,12 @@ GROQ_API_KEY=your_groq_api_key
 ---
 
 ## 📸 Screenshots
+<img width="1915" height="957" alt="image" src="https://github.com/user-attachments/assets/e9b9fa83-fb2e-401b-a0f9-c0b614dc7768" />
 
-You can add screenshots here.
+<img width="1918" height="952" alt="image" src="https://github.com/user-attachments/assets/2695c639-be86-4db7-a669-af5a25064f51" />
 
-Example:
+<img width="1912" height="846" alt="image" src="https://github.com/user-attachments/assets/03b54425-0f4b-45ab-b8ca-d18912dcb278" />
 
-```
-screenshots/
-    dashboard.png
-    copilot.png
-    complaint-form.png
-```
 
 ---
 
