@@ -4,6 +4,7 @@ from app.services.file_service import (
     save_uploaded_file,
     extract_text_from_pdf,
 )
+from app.schemas.text_request import TextRequest
 
 from app.agents.complaint_graph import graph
 
@@ -46,3 +47,26 @@ def extract_from_pdf(
     "capa": result["capa"],
     "risk": result["risk"],
 }
+
+@router.post("/extract-text")
+def extract_from_text(request: TextRequest):
+
+    result = graph.invoke(
+        {
+            "extracted_text": request.text,
+            "extracted_data": {},
+            "summary": "",
+            "risk": "",
+            "root_cause": "",
+            "capa": "",
+        }
+    )
+
+    return {
+        "extracted_data": result["extracted_data"].model_dump(),
+        "summary": result["summary"],
+        "root_cause": result["root_cause"],
+        "capa": result["capa"],
+        "risk": result["risk"],
+    }
+    
