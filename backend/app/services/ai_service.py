@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 
+from app.prompts.complaint_prompt import SYSTEM_PROMPT
+
 load_dotenv()
 
 llm = ChatGroq(
@@ -14,32 +16,21 @@ llm = ChatGroq(
     temperature=0
 )
 
-prompt = ChatPromptTemplate.from_messages([
-    (
-        "system",
-        """
-You are an expert pharmaceutical complaint extraction assistant.
+def extract_complaint_information(text: str):
 
-Extract the complaint information.
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", SYSTEM_PROMPT),
+            ("human", "{text}")
+        ]
+    )
 
-Return ONLY valid JSON.
+    chain = prompt | llm
 
-Fields:
+    response = chain.invoke(
+        {
+            "text": text
+        }
+    )
 
-customer_name
-
-product_name
-
-product_strength
-
-batch_number
-
-complaint_description
-
-initial_severity
-"""
-    ),
-    ("human", "{text}")
-])
-
-chain = prompt | llm
+    return json.loads(response.content)

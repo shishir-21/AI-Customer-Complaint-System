@@ -1,6 +1,7 @@
 from typing import TypedDict
 
 from langgraph.graph import StateGraph, END
+from app.services.ai_service import extract_complaint_information
 
 
 class ComplaintState(TypedDict):
@@ -13,6 +14,13 @@ class ComplaintState(TypedDict):
 
 
 def extract_complaint_node(state):
+
+    extracted = extract_complaint_information(
+        state["extracted_text"]
+    )
+
+    state["extracted_data"] = extracted
+
     return state
 
 
