@@ -2,8 +2,14 @@ import json
 
 from langchain_core.prompts import ChatPromptTemplate
 
-from app.prompts.complaint_prompt import SYSTEM_PROMPT
+from app.prompts.extract_prompt import SYSTEM_PROMPT
+from app.prompts.summary_prompt import SUMMARY_PROMPT
+from app.prompts.root_cause_prompt import ROOT_CAUSE_PROMPT
+from app.prompts.capa_prompt import CAPA_PROMPT
+from app.prompts.risk_prompt import RISK_PROMPT
+
 from app.services.groq_service import llm
+
 
 def extract_complaint_information(text: str):
 
@@ -24,84 +30,82 @@ def extract_complaint_information(text: str):
 
     return json.loads(response.content)
 
+
 def generate_summary(text: str):
 
     prompt = ChatPromptTemplate.from_messages(
         [
-            (
-                "system",
-                "Summarize this pharmaceutical complaint in 2-3 sentences."
-            ),
+            ("system", SUMMARY_PROMPT),
             ("human", "{text}")
         ]
     )
 
     chain = prompt | llm
 
-    response = chain.invoke({"text": text})
+    response = chain.invoke(
+        {
+            "text": text
+        }
+    )
 
     return response.content
+
 
 def generate_root_cause(text: str):
 
     prompt = ChatPromptTemplate.from_messages(
         [
-            (
-                "system",
-                "Identify the most likely root cause of this complaint."
-            ),
+            ("system", ROOT_CAUSE_PROMPT),
             ("human", "{text}")
         ]
     )
 
     chain = prompt | llm
 
-    response = chain.invoke({"text": text})
+    response = chain.invoke(
+        {
+            "text": text
+        }
+    )
 
     return response.content
+
 
 def generate_capa(text: str):
 
     prompt = ChatPromptTemplate.from_messages(
         [
-            (
-                "system",
-                "Suggest CAPA (Corrective and Preventive Actions)."
-            ),
+            ("system", CAPA_PROMPT),
             ("human", "{text}")
         ]
     )
 
     chain = prompt | llm
 
-    response = chain.invoke({"text": text})
+    response = chain.invoke(
+        {
+            "text": text
+        }
+    )
 
     return response.content
+
 
 def classify_risk(text: str):
 
     prompt = ChatPromptTemplate.from_messages(
         [
-            (
-                "system",
-                """
-Classify pharmaceutical complaint risk.
-
-Return ONLY one word.
-
-Low
-
-Medium
-
-High
-"""
-            ),
+            ("system", RISK_PROMPT),
             ("human", "{text}")
         ]
     )
 
     chain = prompt | llm
 
-    response = chain.invoke({"text": text})
+    response = chain.invoke(
+        {
+            "text": text
+        }
+    )
 
     return response.content.strip()
