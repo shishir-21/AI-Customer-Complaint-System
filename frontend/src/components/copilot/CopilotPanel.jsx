@@ -1,17 +1,31 @@
 import { useState } from "react";
 import axios from "axios";
 
+import ChatWindow from "./ChatWindow";
+import ChatInput from "./ChatInput";
+
 function CopilotPanel({ onAIResult }) {
 
-    const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const handleSend = async () => {
+    const [messages, setMessages] = useState([
+        {
+            role: "assistant",
+            content:
+                "👋 Hi! I'm your AI Complaint Copilot.\n\nPaste a complaint or upload a PDF.\n\nI'll extract the information and automatically fill the complaint form.",
+        },
+    ]);
 
-        if (!message.trim()) {
-            alert("Please type a complaint.");
-            return;
-        }
+    const handleSend = async (text) => {
+
+        // 1️⃣ Show user message immediately
+        setMessages((prev) => [
+            ...prev,
+            {
+                role: "user",
+                content: text,
+            },
+        ]);
 
         try {
 
@@ -20,19 +34,45 @@ function CopilotPanel({ onAIResult }) {
             const response = await axios.post(
                 "http://localhost:8000/api/v1/ai/extract-text",
                 {
-                    text: message
+                    text,
                 }
             );
 
+            // 2️⃣ Update complaint form
             onAIResult(response.data);
 
-            setMessage("");
+            // 3️⃣ AI response message
+            setMessages((prev) => [
+                ...prev,
+                {
+                    role: "assistant",
+                    content:
+                        `✅ Complaint parsed successfully!
+
+Customer: ${response.data.extracted_data.customer_name}
+
+Product: ${response.data.extracted_data.product_name}
+
+Batch: ${response.data.extracted_data.batch_number}
+
+Risk: ${response.data.risk}
+
+The complaint form has been updated automatically.`,
+                },
+            ]);
 
         } catch (error) {
 
             console.error(error);
 
-            alert("AI processing failed.");
+            setMessages((prev) => [
+                ...prev,
+                {
+                    role: "assistant",
+                    content:
+                        "❌ Sorry, I couldn't process that complaint.",
+                },
+            ]);
 
         } finally {
 
@@ -46,38 +86,25 @@ function CopilotPanel({ onAIResult }) {
 
         <div
             style={{
-                border: "1px solid #ddd",
-                padding: "20px",
-                borderRadius: "10px",
-                height: "600px",
                 display: "flex",
                 flexDirection: "column",
+                height: "700px",
+                border: "1px solid #ddd",
+                borderRadius: "12px",
+                padding: "20px",
             }}
         >
 
             <h2>🤖 AI Copilot</h2>
 
-            <p>
-                Type or paste a customer complaint below.
-            </p>
-
-            <textarea
-                rows="12"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="Customer complained that tablets were broken..."
+            <ChatWindow
+                messages={messages}
             />
 
-            <br />
-
-            <button
-                onClick={handleSend}
-                disabled={loading}
-            >
-
-                {loading ? "Analyzing..." : "Send"}
-
-            </button>
+            <ChatInput
+                onSend={handleSend}
+                loading={loading}
+            />
 
         </div>
 
