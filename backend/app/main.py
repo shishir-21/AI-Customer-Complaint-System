@@ -2,6 +2,7 @@ from fastapi import FastAPI
 
 from app.api.complaint_routes import router as complaint_router
 from app.api.upload_routes import router as upload_router
+from app.api.ai_routes import router as ai_router
 from app.database.init_db import create_tables
 
 app = FastAPI(
@@ -14,6 +15,7 @@ def startup():
     
 app.include_router(complaint_router)
 app.include_router(upload_router)
+app.include_router(ai_router)
 
 @app.get("/")
 def home():
