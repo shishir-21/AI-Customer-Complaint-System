@@ -222,10 +222,10 @@ GROQ_API_KEY=your_groq_api_key
 **Shishir Mahato**
 
 GitHub:
-https://github.com/YOUR_USERNAME
+https://github.com/shishir-21
 
 LinkedIn:
-https://linkedin.com/in/YOUR_LINKEDIN
+https://www.linkedin.com/in/shishir-mahato-4468aa280/
 
 ---
 
