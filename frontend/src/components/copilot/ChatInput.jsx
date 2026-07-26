@@ -29,10 +29,11 @@ function ChatInput({ onSend, loading, onUpload }) {
 
         <Box
             sx={{
+                flexShrink: 0,
                 display: "flex",
                 alignItems: "center",
                 gap: 1,
-                p: 2,
+                p: 2.5,
                 borderTop: "1px solid #E5E7EB",
                 background: "#fff",
             }}

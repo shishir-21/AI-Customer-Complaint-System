@@ -11,7 +11,12 @@ function RightPanel({ children }) {
             }}
         >
 
-            <CardContent>
+            <CardContent
+                sx={{
+                    height: "100%",
+                    boxSizing: "border-box",
+                }}
+            >
 
                 {children}
 
