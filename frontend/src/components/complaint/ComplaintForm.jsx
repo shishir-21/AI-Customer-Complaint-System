@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import { saveComplaint } from "../../api/complaintApi";
+
 function ComplaintForm({ aiResult }) {
 
     const [formData, setFormData] = useState({
@@ -27,6 +29,41 @@ function ComplaintForm({ aiResult }) {
             ...prev,
             [name]: value,
         }));
+    };
+
+    const handleSave = async () => {
+
+        try {
+
+            const payload = {
+                complaint_source: "AI Upload",
+
+                ...formData,
+
+                ai_summary: aiResult.summary,
+                ai_root_cause: aiResult.root_cause,
+                ai_capa: aiResult.capa,
+                ai_risk: aiResult.risk,
+            };
+
+            console.log(payload);
+
+            const response = await saveComplaint(payload);
+
+            alert("Complaint saved successfully!");
+
+            console.log(response);
+
+        } catch (error) {
+
+            console.error(error);
+
+            console.log(error.response?.data);
+
+            alert("Failed to save complaint.");
+
+        }
+
     };
 
     return (
@@ -128,6 +165,12 @@ function ComplaintForm({ aiResult }) {
                 />
 
             </div>
+
+            <br />
+
+            <button onClick={handleSave}>
+                Save Complaint
+            </button>
 
         </div>
     );

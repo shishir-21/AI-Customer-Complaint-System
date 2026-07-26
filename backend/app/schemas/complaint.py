@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 class ComplaintCreate(BaseModel):
     complaint_source: str
+
     customer_name: str
     product_name: str
     product_strength: str | None = None
@@ -21,14 +22,16 @@ class ComplaintCreate(BaseModel):
 
     initial_severity: str | None = None
     priority: str | None = None
-    
-class ComplaintResponse(ComplaintCreate):
-    id: int
 
+    # AI Fields
     ai_summary: str | None = None
     ai_root_cause: str | None = None
     ai_capa: str | None = None
     ai_risk: str | None = None
+
+
+class ComplaintResponse(ComplaintCreate):
+    id: int
 
     class Config:
         from_attributes = True
