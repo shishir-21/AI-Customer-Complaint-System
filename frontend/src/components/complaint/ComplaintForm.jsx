@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import {
     Box,
@@ -18,42 +18,14 @@ import RootCauseCard from "./RootCauseCard";
 import CAPACard from "./CAPACard";
 import CommitButton from "./CommitButton";
 
-function ComplaintForm({ aiResult }) {
-
-    const [formData, setFormData] = useState({
-        complaint_source: "AI Copilot",
-
-        customer_name: "",
-
-        product_name: "",
-        product_strength: "",
-        batch_number: "",
-
-        quantity_affected: "",
-        manufacturing_date: "",
-        expiry_date: "",
-
-        complaint_type: "",
-
-        complaint_description: "",
-
-        initial_severity: "",
-    });
+function ComplaintForm({
+    aiResult,
+    formData,
+    setFormData,
+    onCommitSuccess,
+}) {
 
     const [openSnackbar, setOpenSnackbar] = useState(false);
-
-    useEffect(() => {
-
-        if (aiResult) {
-
-            setFormData((prev) => ({
-                ...prev,
-                ...aiResult.extracted_data,
-            }));
-
-        }
-
-    }, [aiResult]);
 
     const handleChange = (e) => {
 
@@ -87,6 +59,7 @@ function ComplaintForm({ aiResult }) {
             await saveComplaint(payload);
 
             setOpenSnackbar(true);
+            onCommitSuccess();
 
         } catch (error) {
 

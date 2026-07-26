@@ -4,9 +4,9 @@ from app.services.file_service import (
     save_uploaded_file,
     extract_text_from_pdf,
 )
-from app.schemas.text_request import TextRequest
+from app.schemas.text_request import DraftUpdateRequest, TextRequest
 
-from app.agents.complaint_graph import graph
+from app.agents.complaint_graph import draft_update_graph, graph
 
 router = APIRouter(
     prefix="/api/v1/ai",
@@ -69,4 +69,21 @@ def extract_from_text(request: TextRequest):
         "capa": result["capa"],
         "risk": result["risk"],
     }
-    
+
+
+@router.post("/update-draft")
+def update_draft(request: DraftUpdateRequest):
+
+    result = draft_update_graph.invoke(
+        {
+            "current_form": request.current_form,
+            "message": request.message,
+            "changes": {},
+            "reply": "",
+        }
+    )
+
+    return {
+        "changes": result["changes"],
+        "reply": result["reply"],
+    }

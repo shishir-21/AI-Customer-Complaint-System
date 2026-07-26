@@ -1,81 +1,79 @@
 import { useState } from "react";
 import axios from "axios";
+
 import ChatHeader from "./ChatHeader";
+import ChatInput from "./ChatInput";
+import ChatWindow from "./ChatWindow";
 
 import "./chat.css";
 
-import ChatWindow from "./ChatWindow";
-import ChatInput from "./ChatInput";
-
-function CopilotPanel({ onAIResult }) {
+function CopilotPanel({
+    currentForm,
+    hasActiveDraft,
+    onExtraction,
+    onDraftUpdate,
+}) {
 
     const [loading, setLoading] = useState(false);
-
     const [messages, setMessages] = useState([
         {
             role: "assistant",
-            content:
-                "👋 Hi! I'm your AI Complaint Copilot.\n\nPaste a complaint or upload a PDF.\n\nI'll extract the information and automatically fill the complaint form.",
+            content: "Hi! Upload a complaint or paste a complaint.",
         },
     ]);
 
-    const handleSend = async (text) => {
+    const addAssistantMessage = (content) => {
 
-        // 1️⃣ Show user message immediately
         setMessages((prev) => [
             ...prev,
-            {
-                role: "user",
-                content: text,
-            },
+            { role: "assistant", content },
+        ]);
+
+    };
+
+    const handleSend = async (text) => {
+
+        setMessages((prev) => [
+            ...prev,
+            { role: "user", content: text },
         ]);
 
         try {
 
             setLoading(true);
 
-            const response = await axios.post(
-                "http://localhost:8000/api/v1/ai/extract-text",
-                {
-                    text,
-                }
-            );
+            if (hasActiveDraft) {
 
-            // 2️⃣ Update complaint form
-            onAIResult(response.data);
+                const response = await axios.post(
+                    "http://localhost:8000/api/v1/ai/update-draft",
+                    {
+                        current_form: currentForm,
+                        message: text,
+                    }
+                );
 
-            // 3️⃣ AI response message
-            setMessages((prev) => [
-                ...prev,
-                {
-                    role: "assistant",
-                    content:
-                        `✅ Complaint parsed successfully!
+                onDraftUpdate(response.data.changes);
+                addAssistantMessage(response.data.reply);
 
-Customer: ${response.data.extracted_data.customer_name}
+            } else {
 
-Product: ${response.data.extracted_data.product_name}
+                const response = await axios.post(
+                    "http://localhost:8000/api/v1/ai/extract-text",
+                    {
+                        current_form: currentForm,
+                        text,
+                    }
+                );
 
-Batch: ${response.data.extracted_data.batch_number}
+                onExtraction(response.data);
+                addAssistantMessage("Complaint parsed successfully.");
 
-Risk: ${response.data.risk}
-
-The complaint form has been updated automatically.`,
-                },
-            ]);
+            }
 
         } catch (error) {
 
             console.error(error);
-
-            setMessages((prev) => [
-                ...prev,
-                {
-                    role: "assistant",
-                    content:
-                        "❌ Sorry, I couldn't process that complaint.",
-                },
-            ]);
+            addAssistantMessage("Sorry, I couldn't process that request.");
 
         } finally {
 
@@ -88,7 +86,6 @@ The complaint form has been updated automatically.`,
     const handlePdfUpload = async (file) => {
 
         const formData = new FormData();
-
         formData.append("file", file);
 
         try {
@@ -105,20 +102,13 @@ The complaint form has been updated automatically.`,
                 }
             );
 
-            onAIResult(response.data);
-
-            setMessages((prev) => [
-                ...prev,
-                {
-                    role: "assistant",
-                    content:
-                        "📄 PDF processed successfully.\n\nThe complaint form has been updated.",
-                },
-            ]);
+            onExtraction(response.data);
+            addAssistantMessage("Complaint parsed successfully.");
 
         } catch (error) {
 
             console.error(error);
+            addAssistantMessage("Sorry, I couldn't process that file.");
 
         } finally {
 
@@ -131,23 +121,16 @@ The complaint form has been updated automatically.`,
     return (
 
         <div className="copilot-container">
-
             <ChatHeader />
-
-            <ChatWindow
-                messages={messages}
-            />
-
+            <ChatWindow messages={messages} />
             <ChatInput
                 onSend={handleSend}
                 loading={loading}
                 onUpload={handlePdfUpload}
             />
-
         </div>
 
-    )
-
+    );
 }
 
 export default CopilotPanel;

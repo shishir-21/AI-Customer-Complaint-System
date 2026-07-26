@@ -7,6 +7,7 @@ from app.agents.nodes.summary_node import summary_node
 from app.agents.nodes.root_cause_node import root_cause_node
 from app.agents.nodes.capa_node import capa_node
 from app.agents.nodes.risk_node import risk_node
+from app.agents.nodes.draft_update_node import draft_update_node
 
 from app.schemas.ai_schema import ComplaintExtraction
 
@@ -18,6 +19,13 @@ class ComplaintState(TypedDict):
     risk: str
     root_cause: str
     capa: str
+
+
+class DraftUpdateState(TypedDict):
+    current_form: dict
+    message: str
+    changes: dict
+    reply: str
 
 
 workflow = StateGraph(ComplaintState)
@@ -37,3 +45,11 @@ workflow.add_edge("capa", "risk")
 workflow.add_edge("risk", END)
 
 graph = workflow.compile()
+
+
+draft_update_workflow = StateGraph(DraftUpdateState)
+draft_update_workflow.add_node("update_draft", draft_update_node)
+draft_update_workflow.set_entry_point("update_draft")
+draft_update_workflow.add_edge("update_draft", END)
+
+draft_update_graph = draft_update_workflow.compile()
